@@ -1,0 +1,43 @@
+.message-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.message-assistant {
+  position: relative;
+  background-color: #f0f0f0;
+  border-radius: 16px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  display: inline-block;
+}
+
+.message-assistant::after {
+  content: '';
+  position: absolute;
+  border: 10px solid transparent;
+  border-right-color: #f0f0f0;
+  left: -18px;
+  top: 10px;
+}
+
+.message-user {
+  margin-top: 20px;
+  float: right;
+  position: relative;
+  background-color: #a7ebc4;
+  border-radius: 16px;
+  padding: 10px 20px;
+  display: inline-block;
+}
+
+.message-user::after {
+  content: '';
+  position: absolute;
+  border: 10px solid transparent;
+  border-left-color: #a7ebc4;
+  /* Tail for right bubble */
+  right: -18px;
+  /* Position the tail to the right of the bubble */
+  top: 10px;
+}
