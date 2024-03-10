@@ -21,7 +21,7 @@ export default function ChatWindow(props: { prompt: Prompt }) {
     ]);
 
     async function generateAnswer(payload: Message[]) {
-        const response = await fetch(`${process.env.OLLAMA_BACKEND}/api/chat`, {
+        const response = await fetch(`${import.meta.env.VITE_OLLAMA_BACKEND}/api/chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export default function ChatWindow(props: { prompt: Prompt }) {
     async function generateAnswerDummy(payload: Message[]) {
         setTimeout(() => {
             setLoading(false);
-            payload.push({ role: "assistant", content: "Ich bin ein Dummy und antworte immer das Gleiche." })
+            payload.push({ role: "assistant", content: `Ich bin ein Dummy und antworte immer das Gleiche. Das Ollama Backend ist erreichbar unter ${import.meta.env.VITE_OLLAMA_BACKEND}` })
             setMessages(payload);
         }, 3000);
     };
@@ -93,8 +93,8 @@ export default function ChatWindow(props: { prompt: Prompt }) {
                                 setLoading(true);
 
                                 // generate answer
-                                // generateAnswer(payload);
-                                generateAnswerDummy(new_messages);
+                                generateAnswer(new_messages);
+                                // generateAnswerDummy(new_messages);
                             }
                         }}>
                         <div className="input-group">

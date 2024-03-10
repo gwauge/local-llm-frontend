@@ -9,5 +9,9 @@ export default defineConfig({
       '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
     }
   },
-  plugins: [react()]
+  plugins: [react()],
+  server: {
+    host: '0.0.0.0',
+    port: parseInt(process.env.VITE_PORT) || 3000,
+  }
 })

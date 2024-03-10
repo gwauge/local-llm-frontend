@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import logo from './logo.svg';
 import './App.scss';
 import ChatWindow from './components/ChatWindow'; // Import your ChatWindow component
-import { title } from 'process';
 
 import ChatbotAvatar from "./assets/yoga.svg";
 
@@ -15,7 +13,7 @@ const PROMPTS: Prompt[] = [
     img: ChatbotAvatar
   },
   {
-    title: 'alter, weißer Mittelständler',
+    title: 'Mittelständler',
     prompt: "",
     name: "Thorsten",
     img: ChatbotAvatar
