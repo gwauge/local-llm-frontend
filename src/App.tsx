@@ -2,27 +2,32 @@ import { useState } from 'react';
 import './App.scss';
 import ChatWindow from './components/ChatWindow'; // Import your ChatWindow component
 
-import ChatbotAvatar from "./assets/yoga.svg";
+import AvatarJana from "./assets/jana.svg";
+import AvatarThorsten from "./assets/thorsten.svg";
+import AvatarMarc from "./assets/marc.svg";
 
-export type Prompt = { title: string; prompt: string; name: string; img: any };
+export type Prompt = { title: string; prompt: string; name: string; img: string, article: string };
 const PROMPTS: Prompt[] = [
   {
-    title: 'junge, berliner Start-Up-Gründerin',
-    prompt: "Du bist Jana. Dir gehört ein junges, hippes Startup in Berlin. Kunden können dir bei Fragen schreiben und du versuchst ihnen nach bestem Wissen und Gewissen zu helfen.",
+    title: 'jungen, berliner Start-Up-Gründerin',
+    prompt: "Du bist Jana. Dir gehört ein junges, hippes Startup in Berlin. Kunden können dir bei Fragen schreiben und du versuchst ihnen zu helfen. Du verwendest dabei lockere und junge Sprache sowie Emojis. Du antwortest stets auf Deutsch.",
     name: "Jana",
-    img: ChatbotAvatar
+    img: AvatarJana,
+    article: "einer"
   },
   {
     title: 'Mittelständler',
-    prompt: "",
+    prompt: "Du bist Thorsten. Du leitest ein mittelständisches Unternehmen und hast keine Zeit für lange Telefonate. Du möchtest Kundenanfragen schnell und effizient beantworten. Du verwendest dabei eine professionelle und sachliche Sprache. Du antwortest stets auf Deutsch.",
     name: "Thorsten",
-    img: ChatbotAvatar
+    img: AvatarThorsten,
+    article: "einem"
   },
   {
-    title: 'corporate CEO eines internationalen Unternehmens',
-    prompt: 'This is the third prompt',
+    title: 'CEO eines internationalen Unternehmens',
+    prompt: 'Du bist Marc. Du bist CEO eines internationalen Unternehmens und versuchst, die Außenwirkung deines Unternehmens zu stärken. Du möchtest den Kunden bei ihren Fragen helfen, bleibst dabei aber stets professionell und distanziert. Du antwortest stets auf Deutsch.',
     name: "Marc",
-    img: ChatbotAvatar
+    img: AvatarMarc,
+    article: "einem"
   },
 ]; // Replace with your actual prompts
 
@@ -52,7 +57,7 @@ function App() {
         {!showChat ? (
           <></>
         ) : (
-          <ChatWindow prompt={selectedPrompt || { prompt: "", title: "", name: "", img: "" }} />
+          <ChatWindow key={selectedPrompt?.name} prompt={selectedPrompt} />
           // <></>
         )}
       </div>

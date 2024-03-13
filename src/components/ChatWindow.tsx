@@ -12,7 +12,15 @@ const DUMMY_MESSAGES: Message[] = [
     // { role: "assistant", content: "Ja, sehr gerne!" },
 ];
 
-export default function ChatWindow(props: { prompt: Prompt }) {
+const SAMPLE_QUESTIONS = [
+    "Mein Handy funktioniert nicht mehr. Was soll ich tun?",
+    "Ich würde gerne meinen Vertrag kündigen. Was muss ich dafür tun?",
+    "Ich möchte gerne ihr Produkt kaufen. Wo kann ich das tun?"
+];
+
+export default function ChatWindow(props: { prompt: Prompt | null }) {
+    if (!props.prompt) return <div>Error: No prompt was passed to chat window.</div>;
+
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -20,7 +28,28 @@ export default function ChatWindow(props: { prompt: Prompt }) {
         ...DUMMY_MESSAGES
     ]);
 
+    function sendMessage(message: string) {
+        if (!loading) {
+            // build API payload
+            const user_message: Message = { role: "user", content: message };
+
+            // update UI
+            const new_messages = [...messages];
+            new_messages.push(user_message);
+            setMessages(new_messages);
+
+            setInput("");
+
+            setLoading(true);
+
+            // generate answer
+            generateAnswer(new_messages);
+            // generateAnswerDummy(new_messages);
+        }
+    }
+
     async function generateAnswer(payload: Message[]) {
+        // console.log(payload);
         const response = await fetch(`${import.meta.env.VITE_OLLAMA_BACKEND}/api/chat`, {
             method: "POST",
             headers: {
@@ -53,15 +82,15 @@ export default function ChatWindow(props: { prompt: Prompt }) {
 
     return (
         <div className='chat-window container my-5'>
-            <h1 className="text-center">Chatte mit einem/einer {props.prompt.title}</h1>
+            <h1 className="text-center">Chatte mit {props.prompt.article} {props.prompt.title}</h1>
             <div className="row mt-5">
-                <div className="col-4 text-center">
+                <div className="col-12 col-lg-4 text-center">
                     <img src={props.prompt.img} alt="Chatbot Avatar" style={{ maxHeight: 200 }} />
                     <h3 className="mt-3">{props.prompt.name}</h3>
                     <p>{props.prompt.title}</p>
                 </div>
 
-                <div className="col-8 chat-container d-flex flex-column justify-content-between"
+                <div className="col-12 col-lg-8 chat-container d-flex flex-column justify-content-between"
                     style={{ height: "60vh", borderLeft: "2px solid #7f8c8d" }}
                 >
                     {/* <p>Prompt: "{props.prompt.prompt}"</p> */}
@@ -79,23 +108,7 @@ export default function ChatWindow(props: { prompt: Prompt }) {
                         className="mt-3"
                         onSubmit={e => {
                             e.preventDefault();
-                            if (!loading) {
-                                // build API payload
-                                const user_message: Message = { role: "user", content: input };
-
-                                // update UI
-                                const new_messages = [...messages];
-                                new_messages.push(user_message);
-                                setMessages(new_messages);
-
-                                setInput("");
-
-                                setLoading(true);
-
-                                // generate answer
-                                generateAnswer(new_messages);
-                                // generateAnswerDummy(new_messages);
-                            }
+                            sendMessage(input);
                         }}>
                         <div className="input-group">
                             <input
@@ -119,6 +132,17 @@ export default function ChatWindow(props: { prompt: Prompt }) {
                             {/* <button class="btn btn-outline-secondary" type="button" id="button-addon1">Button</button> */}
                         </div>
                     </form>
+                </div>
+                {/* sample questions */}
+                <div className="row gy-2 mt-2">
+                    {SAMPLE_QUESTIONS.map(question => (
+                        <div className="col-12 col-md-4">
+                            <button
+                                className="btn btn-primary w-100"
+                                onClick={e => sendMessage(question)}
+                            >{question}</button>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
