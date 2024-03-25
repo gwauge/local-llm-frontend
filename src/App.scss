@@ -5,7 +5,7 @@
 
 .message-assistant {
   position: relative;
-  background-color: #f0f0f0;
+  background-color: var(--mdz-lightgrey);
   border-radius: 16px;
   padding: 10px 20px;
   margin-top: 20px;
@@ -16,7 +16,7 @@
   content: '';
   position: absolute;
   border: 10px solid transparent;
-  border-right-color: #f0f0f0;
+  border-right-color: var(--mdz-lightgrey);
   left: -18px;
   top: 10px;
 }
@@ -25,7 +25,8 @@
   margin-top: 20px;
   float: right;
   position: relative;
-  background-color: #a7ebc4;
+  background-color: var(--mdz-red);
+  color: white;
   border-radius: 16px;
   padding: 10px 20px;
   display: inline-block;
@@ -35,7 +36,7 @@
   content: '';
   position: absolute;
   border: 10px solid transparent;
-  border-left-color: #a7ebc4;
+  border-left-color: var(--mdz-red);
   /* Tail for right bubble */
   right: -18px;
   /* Position the tail to the right of the bubble */

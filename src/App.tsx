@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.scss';
 import ChatWindow from './components/ChatWindow'; // Import your ChatWindow component
+import Navbar from './components/Navbar';
 
 import AvatarJana from "./assets/jana.svg";
 import AvatarThorsten from "./assets/thorsten.svg";
@@ -42,26 +43,32 @@ function App() {
   };
 
   return (
-    <main>
-      <div className='container my-5'>
+    <>
+      <Navbar />
+      <main>
+        <div className='container my-2'>
 
-        <div className='row'>
-          {PROMPTS.map((prompt, index) => (
-            <div key={index} className='col-4 justify-content-center align-items-center flex-fill'>
-              <button className='btn btn-success w-100' key={index} onClick={() => handlePromptSelection(prompt)}>
-                {prompt.name}, {prompt.gender == "f" ? "die" : "der"} {prompt.title}
-              </button>
-            </div>
-          ))}
+          <div className='row'>
+            {PROMPTS.map((prompt, index) => (
+              <div key={index} className='col-4 justify-content-center align-items-center flex-fill'>
+                <button
+                  className='btn btn-primary w-100 btn-lg h-100'
+                  style={{ verticalAlign: "middle" }}
+                  key={index}
+                  onClick={() => handlePromptSelection(prompt)}
+                >{prompt.name}, {prompt.gender == "f" ? "die" : "der"} {prompt.title}</button>
+              </div>
+            ))}
+          </div>
+          {!showChat ? (
+            <></>
+          ) : (
+            <ChatWindow key={selectedPrompt?.name} prompt={selectedPrompt} />
+            // <></>
+          )}
         </div>
-        {!showChat ? (
-          <></>
-        ) : (
-          <ChatWindow key={selectedPrompt?.name} prompt={selectedPrompt} />
-          // <></>
-        )}
-      </div>
-    </main>
+      </main >
+    </>
   );
 }
 

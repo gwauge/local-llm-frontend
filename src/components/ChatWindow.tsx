@@ -131,7 +131,7 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                             <label htmlFor="floatingTextarea">Systemprompt</label>
                         </div>
                         <div className="form-text">Änderung am Systemprompt haben nur bei leeren Konversationen einen Effekt</div>
-                        <button className="btn btn-danger" type="button"
+                        <button className="btn btn-warning mt-2" type="button"
                             onClick={e => {
                                 e.preventDefault();
                                 setMessages([]);
@@ -188,13 +188,17 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                     {SAMPLE_QUESTIONS.map((question, i) => (
                         <div className="col-12 col-md-4" key={i}>
                             <button
-                                className="btn btn-primary w-100"
+                                className="btn btn-success w-100 h-100"
+                                style={{
+                                    backgroundColor: "var(--mdz-blue)",
+                                    borderColor: "var(--mdz-blue)"
+                                }}
                                 onClick={e => sendMessage(question)}
                             >{question}</button>
                         </div>
                     ))}
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

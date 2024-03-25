@@ -1,11 +1,45 @@
-@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+
+
+$primary: #cd1719;
+// merge with existing $theme-colors map
+$theme-colors: map-merge($theme-colors, ("primary": $primary));
+
+:root {
+  --mdz-red: #cd1719;
+  --mdz-blue: #00afd4;
+  --mdz-turquoise: #03edd1;
+  --mdz-pink: #cd0a64;
+  --mdz-lightgrey: #f4f4f4;
+}
+
+// set changes
+@import '~bootstrap/scss/bootstrap';
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
+  font-size: 17px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 56px;
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 30px;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 24px;
 }
 
 code {
