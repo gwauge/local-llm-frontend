@@ -21,12 +21,11 @@ const SAMPLE_QUESTIONS = [
 export default function ChatWindow(props: { prompt: Prompt | null }) {
     if (!props.prompt) return <div>Error: No prompt was passed to chat window.</div>;
 
+    const [customPrompt, setCustomPrompt] = useState(props.prompt.prompt);
+
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        { role: "system" as Role, content: props.prompt.prompt },
-        ...DUMMY_MESSAGES
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     function sendMessage(message: string) {
         if (!loading) {
@@ -35,6 +34,10 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
 
             // update UI
             const new_messages = [...messages];
+            if (new_messages.length === 0) {
+                new_messages.push({ role: "system", content: customPrompt });
+            }
+
             new_messages.push(user_message);
             setMessages(new_messages);
 
@@ -81,13 +84,33 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
     };
 
     return (
-        <div className='chat-window container my-5'>
+        <div className='chat-window container my-4'>
             <h1 className="text-center">Chatte mit {props.prompt.article} {props.prompt.title}</h1>
             <div className="row mt-5">
                 <div className="col-12 col-lg-4 text-center">
                     <img src={props.prompt.img} alt="Chatbot Avatar" style={{ maxHeight: 200 }} />
                     <h3 className="mt-3">{props.prompt.name}</h3>
                     <p>{props.prompt.title}</p>
+                    <form>
+                        <div className="form-floating">
+                            <textarea
+                                className="form-control"
+                                placeholder="Leave a comment here"
+                                id="floatingTextarea"
+                                value={customPrompt}
+                                onChange={e => setCustomPrompt(e.target.value)}
+                                style={{ height: "10rem" }}
+                            />
+                            <label htmlFor="floatingTextarea">Systemprompt</label>
+                        </div>
+                        <div className="form-text">Änderung am Systemprompt haben nur bei leeren Konversationen einen Effekt</div>
+                        <button className="btn btn-danger" type="button"
+                            onClick={e => {
+                                e.preventDefault();
+                                setMessages([]);
+                            }}
+                        >Konversation zurücksetzen</button>
+                    </form>
                 </div>
 
                 <div className="col-12 col-lg-8 chat-container d-flex flex-column justify-content-between"

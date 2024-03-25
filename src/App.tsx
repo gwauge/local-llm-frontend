@@ -48,7 +48,7 @@ function App() {
         <div className='row'>
           {PROMPTS.map((prompt, index) => (
             <div key={index} className='col-4 justify-content-center align-items-center flex-fill'>
-              <button className='btn btn-primary w-100' key={index} onClick={() => handlePromptSelection(prompt)}>
+              <button className='btn btn-success w-100' key={index} onClick={() => handlePromptSelection(prompt)}>
                 {prompt.title}
               </button>
             </div>
