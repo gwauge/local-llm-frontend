@@ -1,16 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Prompt } from "../App";
-import LoadingSpinner from "./LoadingSpinner";
 
 type Role = "user" | "assistant" | "system";
 type Message = {
     role: Role;
     content: string;
 }
-const DUMMY_MESSAGES: Message[] = [
-    // { role: "user", content: "Kannst du mir helfen?" },
-    // { role: "assistant", content: "Ja, sehr gerne!" },
-];
 
 const SAMPLE_QUESTIONS = [
     "Mein Handy funktioniert nicht mehr. Was soll ich tun?",
@@ -26,9 +21,7 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
-    const [streamOutput, setStreamOutput] = useState("");
     const lastResponse = useRef(null);
-    useEffect
 
     function sendMessage(message: string) {
         if (!loading) {
@@ -74,12 +67,6 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
             console.error("Failed to generate answer", response);
             return;
         }
-        /*
-        const data = await response.json();
-        payload.push({ role: "assistant", content: data.message.content });
-        setMessages(payload);
-        setLoading(false);
-        */
 
         if (!response.body) throw new Error("error");
         const reader = response.body.getReader(); // Convert res.body into an async iterator
@@ -88,7 +75,7 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
         function parseChunk(chunk: string) {
             const data = JSON.parse(chunk);
             if (data.done) {
-                console.log("DONE!");
+                // console.log("DONE!");
                 setMessages(old => {
                     old[old.length - 1].content = output;
                     return old
@@ -96,7 +83,7 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                 setLoading(false);
                 return false;
             }
-            console.log(data.message.content);
+            // console.log(data.message.content);
             output = output + data.message.content;
             // @ts-ignore
             lastResponse.current.textContent = output;
@@ -123,17 +110,9 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
         }
     }
 
-    async function generateAnswerDummy(payload: Message[]) {
-        setTimeout(() => {
-            setLoading(false);
-            payload.push({ role: "assistant", content: `Ich bin ein Dummy und antworte immer das Gleiche. Das Ollama Backend ist erreichbar unter ${import.meta.env.VITE_OLLAMA_BACKEND}` })
-            setMessages(payload);
-        }, 3000);
-    };
-
     return (
         <div className='chat-window container my-4'>
-            <h1 className="text-center">Chatte mit {props.prompt.article} {props.prompt.title}</h1>
+            <h1 className="text-center">Chatte mit: {props.prompt.name}, {props.prompt.gender == "f" ? "die" : "der"} {props.prompt.title}</h1>
             <div className="row mt-5">
                 <div className="col-12 col-lg-4 text-center">
                     <img src={props.prompt.img} alt="Chatbot Avatar" style={{ maxHeight: 200 }} />
@@ -165,7 +144,6 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                 <div className="col-12 col-lg-8 chat-container d-flex flex-column justify-content-between"
                     style={{ height: "60vh", borderLeft: "2px solid #7f8c8d" }}
                 >
-                    {/* <p>Prompt: "{props.prompt.prompt}"</p> */}
                     <div className="row message-container">
                         {messages.slice(1).map((message, index) => (
                             <div key={index} className="col-12">
@@ -176,8 +154,6 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                             </div>
                         ))}
                     </div>
-
-                    {/* {loading && <LoadingSpinner />} */}
 
                     <form
                         className="mt-3"
@@ -204,7 +180,6 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                                     <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z" />
                                 </svg>
                             </button>
-                            {/* <button class="btn btn-outline-secondary" type="button" id="button-addon1">Button</button> */}
                         </div>
                     </form>
                 </div>
