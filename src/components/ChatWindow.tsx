@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Prompt } from "../App";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -26,6 +26,9 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [streamOutput, setStreamOutput] = useState("");
+    const lastResponse = useRef(null);
+    useEffect
 
     function sendMessage(message: string) {
         if (!loading) {
@@ -53,6 +56,9 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
 
     async function generateAnswer(payload: Message[]) {
         // console.log(payload);
+        payload.push({ role: "assistant", content: "" });
+        setMessages(payload);
+
         const response = await fetch(`${import.meta.env.VITE_OLLAMA_BACKEND}/api/chat`, {
             method: "POST",
             headers: {
@@ -61,18 +67,60 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
             body: JSON.stringify({
                 model: "mixtral:8x7b-instruct-v0.1-q3_K_M",
                 messages: payload,
-                stream: false
+                stream: true
             })
         });
         if (!response.ok) {
             console.error("Failed to generate answer", response);
             return;
         }
-
+        /*
         const data = await response.json();
         payload.push({ role: "assistant", content: data.message.content });
         setMessages(payload);
         setLoading(false);
+        */
+
+        if (!response.body) throw new Error("error");
+        const reader = response.body.getReader(); // Convert res.body into an async iterator
+        // Iterate over the chunks using the async iterator
+        let output = "";
+        function parseChunk(chunk: string) {
+            const data = JSON.parse(chunk);
+            if (data.done) {
+                console.log("DONE!");
+                setMessages(old => {
+                    old[old.length - 1].content = output;
+                    return old
+                });
+                setLoading(false);
+                return false;
+            }
+            console.log(data.message.content);
+            output = output + data.message.content;
+            // @ts-ignore
+            lastResponse.current.textContent = output;
+        }
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (!value) console.error("value is undefined");
+
+            // parse value
+            const chunk = new TextDecoder().decode(value);
+            for (const item of chunk.split("\n")) {
+                if (item == "") continue;
+                try {
+                    parseChunk(item);
+                } catch (e) {
+                    if (e instanceof SyntaxError) {
+                        console.log(`[ERROR] chunk: '${item}'`);
+                        continue;
+                    }
+                    console.error(e);
+                }
+            }
+        }
     }
 
     async function generateAnswerDummy(payload: Message[]) {
@@ -108,6 +156,7 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                             onClick={e => {
                                 e.preventDefault();
                                 setMessages([]);
+                                setLoading(false);
                             }}
                         >Konversation zurücksetzen</button>
                     </form>
@@ -120,12 +169,15 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                     <div className="row message-container">
                         {messages.slice(1).map((message, index) => (
                             <div key={index} className="col-12">
-                                <div className={`message-${message.role}`}>{message.content}</div>
+                                {index == messages.length - 2 ?
+                                    <div ref={lastResponse} className={`message-${message.role}`}>{message.content}</div> :
+                                    <div className={`message-${message.role}`}>{message.content}</div>
+                                }
                             </div>
                         ))}
                     </div>
 
-                    {loading && <LoadingSpinner />}
+                    {/* {loading && <LoadingSpinner />} */}
 
                     <form
                         className="mt-3"
@@ -158,8 +210,8 @@ export default function ChatWindow(props: { prompt: Prompt | null }) {
                 </div>
                 {/* sample questions */}
                 <div className="row gy-2 mt-2">
-                    {SAMPLE_QUESTIONS.map(question => (
-                        <div className="col-12 col-md-4">
+                    {SAMPLE_QUESTIONS.map((question, i) => (
+                        <div className="col-12 col-md-4" key={i}>
                             <button
                                 className="btn btn-primary w-100"
                                 onClick={e => sendMessage(question)}

@@ -5,13 +5,17 @@ Created as part of the [Mittelstand-Digital](https://digitalzentrum-berlin.de/) 
 
 # How to run
 
+1. Clone the repository
+2. Copy the `.env.example` file to `.env` and fill in the required values
+3. [run using docker](#run-frontend-using-docker)
+
 ## run frontend using docker
 ```bash
-docker compose up -d
+docker compose up
 ```
-in development mode, the server isn't started automatically so might need to run
+in development mode, dependencies arent automatically installed
 ```bash
-npm run dev
+docker exec -it ollama-frontend npm install
 ```
 
 ## Ollama server
@@ -27,6 +31,5 @@ ssh {OLLAMA_HOST} -L 11434:localhost:11434
 #### Note
 Ollama requires a few env variables to be set. Specifcally:
 - `OLLAMA_HOST=0.0.0.0:11434`
-- optionally `OLLAMA_ORIGINS=http://localhost:*`
 
 
